@@ -182,7 +182,7 @@
 <body>
     <div class="container">
         <h1>Genealogy Citation Builder</h1>
-        <p class="subtitle">Evidence Explained Format • Created for Bernie Krause</p>
+        <p class="subtitle">Evidence Explained Format • Created for Bernie Krause • v2.0</p>
         
         <div class="instructions">
             <strong>Instructions:</strong> Select a source type below, fill in the available information, and click "Generate Citations" to create properly formatted citations in Evidence Explained style.
@@ -197,7 +197,7 @@
             <div class="tab" data-tab="newspaper">Newspaper</div>
             <div class="tab" data-tab="compiled">Compiled Genealogy</div>
             <div class="tab" data-tab="military">Military Records</div>
-   <div class="tab" data-tab="immigration">Immigration</div>
+            <div class="tab" data-tab="immigration">Immigration</div>
         </div>
         
         <!-- Federal Census Form -->
@@ -496,21 +496,7 @@
             </div>
         </div>
         
-        <button class="generate-btn" onclick="generateCitations()">Generate Citations</button>
-        
-        <div class="output-section" id="output">
-            <div class="citation-box">
-                <h3>First Reference Note</h3>
-                <div class="citation-text" id="first-note"></div>
-                <button class="copy-btn" onclick="copyCitation('first-note')">Copy to Clipboard</button>
-            </div>
-            
-            <div class="citation-box">
-                <h3>Subsequent Note</h3>
-                <div class="citation-text" id="subsequent-note"></div>
-                <button class="copy-btn" onclick="copyCitation('subsequent-note')">Copy to Clipboard</button>
-            </div>
-            <!-- Military Records Form -->
+        <!-- Military Records Form -->
         <div class="form-section" id="military-form">
             <div class="form-group">
                 <label>Record Type:</label>
@@ -553,6 +539,74 @@
                 <input type="text" id="military-accessed" placeholder="accessed 1 January 2025">
             </div>
         </div>
+        
+        <!-- Immigration Records Form -->
+        <div class="form-section" id="immigration-form">
+            <div class="form-group">
+                <label>Record Type:</label>
+                <input type="text" id="immigration-type" placeholder="Naturalization, Passenger List, Border Crossing">
+            </div>
+            <div class="form-group">
+                <label>Person's Name:</label>
+                <input type="text" id="immigration-name" placeholder="Giuseppe Romano">
+            </div>
+            <div class="form-group">
+                <label>Ship Name (if applicable):</label>
+                <input type="text" id="immigration-ship" placeholder="SS Bremen">
+            </div>
+            <div class="form-group">
+                <label>Arrival/Event Date:</label>
+                <input type="text" id="immigration-date" placeholder="15 April 1905">
+            </div>
+            <div class="form-group">
+                <label>Port of Entry:</label>
+                <input type="text" id="immigration-port" placeholder="New York, New York">
+            </div>
+            <div class="form-group">
+                <label>Departure Port (if applicable):</label>
+                <input type="text" id="immigration-departure" placeholder="Bremen, Germany">
+            </div>
+            <div class="form-group">
+                <label>Certificate/Petition Number:</label>
+                <input type="text" id="immigration-number" placeholder="Certificate No. 123456">
+            </div>
+            <div class="form-group">
+                <label>Court (for naturalization):</label>
+                <input type="text" id="immigration-court" placeholder="Circuit Court of Cook County, Illinois">
+            </div>
+            <div class="form-group">
+                <label>Record Group/Series:</label>
+                <input type="text" id="immigration-series" placeholder="NARA M237, Roll 456">
+            </div>
+            <div class="form-group">
+                <label>Repository:</label>
+                <input type="text" id="immigration-repository" placeholder="National Archives, Ancestry.com, etc.">
+            </div>
+            <div class="form-group">
+                <label>URL (if online):</label>
+                <input type="text" id="immigration-url" placeholder="https://...">
+            </div>
+            <div class="form-group">
+                <label>Access Date:</label>
+                <input type="text" id="immigration-accessed" placeholder="accessed 1 January 2025">
+            </div>
+        </div>
+        
+        <button class="generate-btn" onclick="generateCitations()">Generate Citations</button>
+        
+        <div class="output-section" id="output">
+            <div class="citation-box">
+                <h3>First Reference Note</h3>
+                <div class="citation-text" id="first-note"></div>
+                <button class="copy-btn" onclick="copyCitation('first-note')">Copy to Clipboard</button>
+            </div>
+            
+            <div class="citation-box">
+                <h3>Subsequent Note</h3>
+                <div class="citation-text" id="subsequent-note"></div>
+                <button class="copy-btn" onclick="copyCitation('subsequent-note')">Copy to Clipboard</button>
+            </div>
+            
             <div class="citation-box">
                 <h3>Source List Entry</h3>
                 <div class="citation-text" id="source-list"></div>
@@ -593,7 +647,7 @@
                 land: generateLand,
                 church: generateChurch,
                 newspaper: generateNewspaper,
-                compiled: generateCompiled, 
+                compiled: generateCompiled,
                 military: generateMilitary,
                 immigration: generateImmigration
             };
@@ -960,10 +1014,7 @@
             document.getElementById('subsequent-note').innerHTML = subsequent;
             document.getElementById('source-list').innerHTML = source;
         }
-        // STEP 4: ADD THESE TWO GENERATOR FUNCTIONS
-// Find the generateCompiled() function
-// Add these TWO functions right after it (before the copyCitation function):
-
+        
         function generateMilitary() {
             const type = get('military-type');
             const name = get('military-name');
