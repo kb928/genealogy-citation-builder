@@ -196,6 +196,8 @@
             <div class="tab" data-tab="church">Church Records</div>
             <div class="tab" data-tab="newspaper">Newspaper</div>
             <div class="tab" data-tab="compiled">Compiled Genealogy</div>
+            <div class="tab" data-tab="military">Military Records</div>
+   <div class="tab" data-tab="immigration">Immigration</div>
         </div>
         
         <!-- Federal Census Form -->
@@ -508,7 +510,49 @@
                 <div class="citation-text" id="subsequent-note"></div>
                 <button class="copy-btn" onclick="copyCitation('subsequent-note')">Copy to Clipboard</button>
             </div>
-            
+            <!-- Military Records Form -->
+        <div class="form-section" id="military-form">
+            <div class="form-group">
+                <label>Record Type:</label>
+                <input type="text" id="military-type" placeholder="Draft Registration, Service Record, Pension File">
+            </div>
+            <div class="form-group">
+                <label>Soldier/Veteran Name:</label>
+                <input type="text" id="military-name" placeholder="John Q. Smith">
+            </div>
+            <div class="form-group">
+                <label>Service Branch:</label>
+                <input type="text" id="military-branch" placeholder="U.S. Army, U.S. Navy, etc.">
+            </div>
+            <div class="form-group">
+                <label>Unit/Regiment:</label>
+                <input type="text" id="military-unit" placeholder="Company B, 5th Infantry Regiment">
+            </div>
+            <div class="form-group">
+                <label>Service Dates:</label>
+                <input type="text" id="military-dates" placeholder="1917-1919">
+            </div>
+            <div class="form-group">
+                <label>File/Certificate Number:</label>
+                <input type="text" id="military-number" placeholder="Serial No. 123456">
+            </div>
+            <div class="form-group">
+                <label>Record Group/Series:</label>
+                <input type="text" id="military-series" placeholder="NARA RG 94, Series M1509">
+            </div>
+            <div class="form-group">
+                <label>Repository:</label>
+                <input type="text" id="military-repository" placeholder="National Archives, Fold3, etc.">
+            </div>
+            <div class="form-group">
+                <label>URL (if online):</label>
+                <input type="text" id="military-url" placeholder="https://...">
+            </div>
+            <div class="form-group">
+                <label>Access Date:</label>
+                <input type="text" id="military-accessed" placeholder="accessed 1 January 2025">
+            </div>
+        </div>
             <div class="citation-box">
                 <h3>Source List Entry</h3>
                 <div class="citation-text" id="source-list"></div>
@@ -550,6 +594,8 @@
                 church: generateChurch,
                 newspaper: generateNewspaper,
                 compiled: generateCompiled
+                military: generateMilitary,
+    immigration: generateImmigration
             };
             
             generators[activeTab]();
@@ -904,6 +950,112 @@
                 if (year) pubInfo.push(year);
                 source += pubInfo.join(' : ');
             }
+            if (repository) source += `. ${repository}`;
+            if (url) source += ` (${url}`;
+            if (accessed) source += ` : ${accessed}`;
+            if (url) source += ')';
+            source += '.';
+            
+            document.getElementById('first-note').innerHTML = first;
+            document.getElementById('subsequent-note').innerHTML = subsequent;
+            document.getElementById('source-list').innerHTML = source;
+        }
+        // STEP 4: ADD THESE TWO GENERATOR FUNCTIONS
+// Find the generateCompiled() function
+// Add these TWO functions right after it (before the copyCitation function):
+
+        function generateMilitary() {
+            const type = get('military-type');
+            const name = get('military-name');
+            const branch = get('military-branch');
+            const unit = get('military-unit');
+            const dates = get('military-dates');
+            const number = get('military-number');
+            const series = get('military-series');
+            const repository = get('military-repository');
+            const url = get('military-url');
+            const accessed = get('military-accessed');
+            
+            // First Reference Note
+            let first = '';
+            if (name) first += `${name}, `;
+            first += type;
+            if (number) first += `, ${number}`;
+            if (branch) first += `; ${branch}`;
+            if (unit) first += `, ${unit}`;
+            if (dates) first += ` (${dates})`;
+            if (series) first += `; ${series}`;
+            if (repository) first += `; ${repository}`;
+            if (url) first += ` (${url}`;
+            if (accessed) first += ` : ${accessed}`;
+            if (url) first += ')';
+            first += '.';
+            
+            // Subsequent Note
+            let subsequent = '';
+            if (name) subsequent += `${name}, `;
+            subsequent += type;
+            if (number) subsequent += `, ${number}`;
+            subsequent += '.';
+            
+            // Source List Entry
+            let source = '';
+            if (branch) source += `${branch}. `;
+            source += type;
+            if (series) source += `. ${series}`;
+            if (repository) source += `. ${repository}`;
+            if (url) source += ` (${url}`;
+            if (accessed) source += ` : ${accessed}`;
+            if (url) source += ')';
+            source += '.';
+            
+            document.getElementById('first-note').innerHTML = first;
+            document.getElementById('subsequent-note').innerHTML = subsequent;
+            document.getElementById('source-list').innerHTML = source;
+        }
+        
+        function generateImmigration() {
+            const type = get('immigration-type');
+            const name = get('immigration-name');
+            const ship = get('immigration-ship');
+            const date = get('immigration-date');
+            const port = get('immigration-port');
+            const departure = get('immigration-departure');
+            const number = get('immigration-number');
+            const court = get('immigration-court');
+            const series = get('immigration-series');
+            const repository = get('immigration-repository');
+            const url = get('immigration-url');
+            const accessed = get('immigration-accessed');
+            
+            // First Reference Note
+            let first = '';
+            if (name) first += `${name}, `;
+            first += type;
+            if (number) first += `, ${number}`;
+            if (court) first += ` (${court})`;
+            if (date) first += `, ${date}`;
+            if (ship) first += `; ${ship}`;
+            if (departure && port) first += `, ${departure} to ${port}`;
+            else if (port) first += `, ${port}`;
+            if (series) first += `; ${series}`;
+            if (repository) first += `; ${repository}`;
+            if (url) first += ` (${url}`;
+            if (accessed) first += ` : ${accessed}`;
+            if (url) first += ')';
+            first += '.';
+            
+            // Subsequent Note
+            let subsequent = '';
+            if (name) subsequent += `${name}, `;
+            subsequent += type;
+            if (date) subsequent += `, ${date}`;
+            subsequent += '.';
+            
+            // Source List Entry
+            let source = type;
+            if (court) source += `. ${court}`;
+            if (series) source += `. ${series}`;
             if (repository) source += `. ${repository}`;
             if (url) source += ` (${url}`;
             if (accessed) source += ` : ${accessed}`;
