@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Genealogy Citation Builder</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Georgia, 'Times New Roman', serif;
+            background: linear-gradient(135deg, #f5f1e8 0%, #e8dcc8 100%);
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: #5c4033;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 32px;
+            border-bottom: 3px solid #8b6f47;
+            padding-bottom: 15px;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #8b6f47;
+            font-style: italic;
+            margin-bottom: 30px;
+            font-size: 16px;
+        }
+        
+        .tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #d4c4a8;
+            padding-bottom: 10px;
+        }
+        
+        .tab {
+            padding: 12px 20px;
+            background: #f5f1e8;
+            border: 2px solid #d4c4a8;
+            border-radius: 5px 5px 0 0;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: #5c4033;
+            font-weight: bold;
+        }
+        
+        .tab:hover {
+            background: #e8dcc8;
+        }
+        
+        .tab.active {
+            background: #8b6f47;
+            color: white;
+            border-color: #8b6f47;
+        }
+        
+        .form-section {
+            display: none;
+        }
+        
+        .form-section.active {
+            display: block;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #5c4033;
+            font-weight: bold;
+        }
+        
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #d4c4a8;
+            border-radius: 5px;
+            font-family: Georgia, serif;
+            font-size: 14px;
+        }
+        
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #8b6f47;
+        }
+        
+        .generate-btn {
+            background: #8b6f47;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            width: 100%;
+            margin-top: 20px;
+            transition: background 0.3s;
+        }
+        
+        .generate-btn:hover {
+            background: #5c4033;
+        }
+        
+        .output-section {
+            margin-top: 30px;
+            display: none;
+        }
+        
+        .output-section.show {
+            display: block;
+        }
+        
+        .citation-box {
+            background: #f9f6f0;
+            border: 2px solid #8b6f47;
+            border-radius: 5px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .citation-box h3 {
+            color: #5c4033;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+        
+        .citation-text {
+            color: #333;
+            font-size: 14px;
+            line-height: 1.8;
+            margin-bottom: 15px;
+        }
+        
+        .copy-btn {
+            background: #5c4033;
+            color: white;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: background 0.3s;
+        }
+        
+        .copy-btn:hover {
+            background: #8b6f47;
+        }
+        
+        .instructions {
+            background: #fff8e7;
+            border-left: 4px solid #8b6f47;
+            padding: 15px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Genealogy Citation Builder</h1>
+        <p class="subtitle">Evidence Explained Format • Created for Bernie Krause</p>
+        
+        <div class="instructions">
+            <strong>Instructions:</strong> Select a source type below, fill in the available information, and click "Generate Citations" to create properly formatted citations in Evidence Explained style.
+        </div>
+        
+        <div class="tabs">
+            <div class="tab active" data-tab="census">Federal Census</div>
+            <div class="tab" data-tab="vital">Vital Records</div>
+            <div class="tab" data-tab="probate">Probate</div>
+            <div class="tab" data-tab="land">Land Records</div>
+            <div class="tab" data-tab="church">Church Records</div>
+            <div class="tab" data-tab="newspaper">Newspaper</div>
+            <div class="tab" data-tab="compiled">Compiled Genealogy</div>
+        </div>
+        
+        <!-- Federal Census Form -->
+        <div class="form-section active" id="census-form">
+            <div class="form-group">
+                <label>Census Year:</label>
+                <input type="text" id="census-year" placeholder="1930">
+            </div>
+            <div class="form-group">
+                <label>State:</label>
+                <input type="text" id="census-state" placeholder="Missouri">
+            </div>
+            <div class="form-group">
+                <label>County:</label>
+                <input type="text" id="census-county" placeholder="St. Louis">
+            </div>
+            <div class="form-group">
+                <label>Township/City:</label>
+                <input type="text" id="census-township" placeholder="City of St. Louis">
+            </div>
+            <div class="form-group">
+                <label>Enumeration District:</label>
+                <input type="text" id="census-ed" placeholder="ED 96-145">
+            </div>
+            <div class="form-group">
+                <label>Sheet/Page Number:</label>
+                <input type="text" id="census-sheet" placeholder="sheet 7A">
+            </div>
+            <div class="form-group">
+                <label>Line Number:</label>
+                <input type="text" id="census-line" placeholder="line 32">
+            </div>
+            <div class="form-group">
+                <label>Head of Household:</label>
+                <input type="text" id="census-household" placeholder="John Smith">
+            </div>
+            <div class="form-group">
+                <label>Database/Website:</label>
+                <input type="text" id="census-database" placeholder="Ancestry.com">
+            </div>
+            <div class="form-group">
+                <label>URL (if online):</label>
+                <input type="text" id="census-url" placeholder="https://www.ancestry.com/...">
+            </div>
+            <div class="form-group">
+                <label>Access Date:</label>
+                <input type="text" id="census-accessed" placeholder="accessed 1 January 2025">
+            </div>
+        </div>
+        
+        <!-- Vital Records Form -->
+        <div class="form-section" id="vital-form">
+            <div class="form-group">
+                <label>Record Type:</label>
+                <input type="text" id="vital-type" placeholder="Birth Certificate, Death Certificate, Marriage License">
+            </div>
+            <div class="form-group">
+                <label>Person's Name:</label>
+                <input type="text" id="vital-name" placeholder="Mary Jane Smith">
+            </div>
+            <div class="form-group">
+                <label>Certificate/File Number:</label>
+                <input type="text" id="vital-number" placeholder="Certificate No. 12345">
+            </div>
+            <div class="form-group">
+                <label>Event Date:</label>
+                <input type="text" id="vital-date" placeholder="15 March 1925">
+            </div>
+            <div class="form-group">
+                <label>Event Place:</label>
+                <input type="text" id="vital-place" placeholder="St. Louis, Missouri">
+            </div>
+            <div class="form-group">
+                <label>Issuing Authority:</label>
+                <input type="text" id="vital-authority" placeholder="Missouri Department of Health">
+            </div>
+            <div class="form-group">
+                <label>Repository:</label>
+                <input type="text" id="vital-repository" placeholder="Missouri State Archives">
+            </div>
+            <div class="form-group">
+                <label>URL (if online):</label>
+                <input type="text" id="vital-url" placeholder="https://...">
+            </div>
+            <div class="form-group">
+                <label>Access Date:</label>
+                <input type="text" id="vital-accessed" placeholder="accessed 1 January 2025">
+            </div>
+        </div>
+        
+        <!-- Probate Records Form -->
+        <div class="form-section" id="probate-form">
+            <div class="form-group">
+                <label>Deceased Name:</label>
+                <input type="text" id="probate-name" placeholder="John Q. Smith">
+            </div>
+            <div class="form-group">
+                <label>Record Type:</label>
+                <input type="text" id="probate-type" placeholder="Will, Estate File, Inventory">
+            </div>
+            <div class="form-group">
+                <label>Case/File Number:</label>
+                <input type="text" id="probate-case" placeholder="Case No. 1234">
+            </div>
+            <div class="form-group">
+                <label>Probate Date:</label>
+                <input type="text" id="probate-date" placeholder="3 April 1890">
+            </div>
+            <div class="form-group">
+                <label>Court Name:</label>
+                <input type="text" id="probate-court" placeholder="St. Louis County Probate Court">
+            </div>
+            <div class="form-group">
+                <label>County, State:</label>
+                <input type="text" id="probate-location" placeholder="St. Louis County, Missouri">
+            </div>
+            <div class="form-group">
+                <label>Volume/Page:</label>
+                <input type="text" id="probate-volume" placeholder="Vol. 12, p. 456">
+            </div>
+            <div class="form-group">
+                <label>Repository:</label>
+                <input type="text" id="probate-repository" placeholder="Missouri State Archives">
+            </div>
+            <div class="form-group">
+                <label>URL (if online):</label>
+                <input type="text" id="probate-url" placeholder="https://...">
+            </div>
+            <div class="form-group">
+                <label>Access Date:</label>
+                <input type="text" id="probate-accessed" placeholder="accessed 1 January 2025">
+            </div>
+        </div>
+        
+        <!-- Land Records Form -->
+        <div class="form-section" id="land-form">
+            <div class="form-group">
+                <label>Grantor (Seller):</label>
+                <input type="text" id="land-grantor" placeholder="John Smith">
+            </div>
+            <div class="form-group">
+                <label>Grantee (Buyer):</label>
+                <input type="text" id="land-grantee" placeholder="Mary Jones">
+            </div>
+            <div class="form-group">
+                <label>Record Type:</label>
+                <input type="text" id="land-type" placeholder="Deed, Mortgage, Land Patent">
+            </div>
+            <div class="form-group">
+                <label>Date of Document:</label>
+                <input type="text" id="land-date" placeholder="10 June 1875">
+            </div>
+            <div class="form-group">
+                <label>Recording Date:</label>
+                <input type="text" id="land-recorded" placeholder="recorded 15 June 1875">
+            </div>
+            <div class="form-group">
+                <label>Book/Volume and Page:</label>
+                <input type="text" id="land-book" placeholder="Deed Book 23, p. 145">
+            </div>
+            <div class="form-group">
+                <label>County, State:</label>
+                <input type="text" id="land-location" placeholder="Franklin County, Missouri">
+            </div>
+            <div class="form-group">
+                <label>Repository:</label>
+                <input type="text" id="land-repository" placeholder="Franklin County Recorder of Deeds">
+            </div>
+            <div class="form-group">
+                <label>URL (if online):</label>
+                <input type="text" id="land-url" placeholder="https://...">
+            </div>
+            <div class="form-group">
+                <label>Access Date:</label>
+                <input type="text" id="land-accessed" placeholder="accessed 1 January 2025">
+            </div>
+        </div>
+        
+        <!-- Church Records Form -->
+        <div class="form-section" id="church-form">
+            <div class="form-group">
+                <label>Church Name:</label>
+                <input type="text" id="church-name" placeholder="First Baptist Church">
+            </div>
+            <div class="form-group">
+                <label>Church Location:</label>
+                <input type="text" id="church-location" placeholder="St. Louis, Missouri">
+            </div>
+            <div class="form-group">
+                <label>Record Type:</label>
+                <input type="text" id="church-type" placeholder="Baptism Register, Marriage Record, Burial Record">
+            </div>
+            <div class="form-group">
+                <label>Person's Name:</label>
+                <input type="text" id="church-person" placeholder="Mary Smith">
+            </div>
+            <div class="form-group">
+                <label>Event Date:</label>
+                <input type="text" id="church-date" placeholder="12 May 1895">
+            </div>
+            <div class="form-group">
+                <label>Volume/Page:</label>
+                <input type="text" id="church-volume" placeholder="Vol. 3, p. 27">
+            </div>
+            <div class="form-group">
+                <label>Repository:</label>
+                <input type="text" id="church-repository" placeholder="Church Archives, FamilySearch">
+            </div>
+            <div class="form-group">
+                <label>URL (if online):</label>
+                <input type="text" id="church-url" placeholder="https://...">
+            </div>
+            <div class="form-group">
+                <label>Access Date:</label>
+                <input type="text" id="church-accessed" placeholder="accessed 1 January 2025">
+            </div>
+        </div>
+        
+        <!-- Newspaper Form -->
+        <div class="form-section" id="newspaper-form">
+            <div class="form-group">
+                <label>Newspaper Name:</label>
+                <input type="text" id="newspaper-name" placeholder="The Daily Tribune">
+            </div>
+            <div class="form-group">
+                <label>Publication Place:</label>
+                <input type="text" id="newspaper-place" placeholder="Chicago, Illinois">
+            </div>
+            <div class="form-group">
+                <label>Article Title/Type:</label>
+                <input type="text" id="newspaper-article" placeholder="Marriage Notice, Obituary, etc.">
+            </div>
+            <div class="form-group">
+                <label>Publication Date:</label>
+                <input type="text" id="newspaper-date" placeholder="15 March 1895">
+            </div>
+            <div class="form-group">
+                <label>Page/Column:</label>
+                <input type="text" id="newspaper-page" placeholder="page 3, column 2">
+            </div>
+            <div class="form-group">
+                <label>Repository/Database:</label>
+                <input type="text" id="newspaper-repository" placeholder="Newspapers.com, Library microfilm, etc.">
+            </div>
+            <div class="form-group">
+                <label>URL (if online):</label>
+                <input type="text" id="newspaper-url" placeholder="https://www.newspapers.com/...">
+            </div>
+            <div class="form-group">
+                <label>Access Date:</label>
+                <input type="text" id="newspaper-accessed" placeholder="accessed 1 January 2025">
+            </div>
+        </div>
+        
+        <!-- Compiled Genealogy Form -->
+        <div class="form-section" id="compiled-form">
+            <div class="form-group">
+                <label>Author Name:</label>
+                <input type="text" id="compiled-author" placeholder="Smith, John Q.">
+            </div>
+            <div class="form-group">
+                <label>Book Title:</label>
+                <input type="text" id="compiled-title" placeholder="The Smith Family History">
+            </div>
+            <div class="form-group">
+                <label>Publication Place:</label>
+                <input type="text" id="compiled-place" placeholder="Boston, Massachusetts">
+            </div>
+            <div class="form-group">
+                <label>Publisher:</label>
+                <input type="text" id="compiled-publisher" placeholder="Heritage Books">
+            </div>
+            <div class="form-group">
+                <label>Publication Year:</label>
+                <input type="text" id="compiled-year" placeholder="1995">
+            </div>
+            <div class="form-group">
+                <label>Page Number(s):</label>
+                <input type="text" id="compiled-page" placeholder="147">
+            </div>
+            <div class="form-group">
+                <label>Entry/Item:</label>
+                <input type="text" id="compiled-entry" placeholder="entry for Mary Smith">
+            </div>
+            <div class="form-group">
+                <label>Repository/Collection:</label>
+                <input type="text" id="compiled-repository" placeholder="Family History Library, Ancestry.com, etc.">
+            </div>
+            <div class="form-group">
+                <label>URL (if online):</label>
+                <input type="text" id="compiled-url" placeholder="https://www.ancestry.com/...">
+            </div>
+            <div class="form-group">
+                <label>Access Date:</label>
+                <input type="text" id="compiled-accessed" placeholder="accessed 1 January 2025">
+            </div>
+        </div>
+        
+        <button class="generate-btn" onclick="generateCitations()">Generate Citations</button>
+        
+        <div class="output-section" id="output">
+            <div class="citation-box">
+                <h3>First Reference Note</h3>
+                <div class="citation-text" id="first-note"></div>
+                <button class="copy-btn" onclick="copyCitation('first-note')">Copy to Clipboard</button>
+            </div>
+            
+            <div class="citation-box">
+                <h3>Subsequent Note</h3>
+                <div class="citation-text" id="subsequent-note"></div>
+                <button class="copy-btn" onclick="copyCitation('subsequent-note')">Copy to Clipboard</button>
+            </div>
+            
+            <div class="citation-box">
+                <h3>Source List Entry</h3>
+                <div class="citation-text" id="source-list"></div>
+                <button class="copy-btn" onclick="copyCitation('source-list')">Copy to Clipboard</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Tab switching
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                const tabName = this.dataset.tab;
+                
+                // Update active tab
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                
+                // Update active form
+                document.querySelectorAll('.form-section').forEach(f => f.classList.remove('active'));
+                document.getElementById(tabName + '-form').classList.add('active');
+                
+                // Hide output when switching tabs
+                document.getElementById('output').classList.remove('show');
+            });
+        });
+        
+        function get(id) {
+            return document.getElementById(id).value.trim();
+        }
+        
+        function generateCitations() {
+            const activeTab = document.querySelector('.tab.active').dataset.tab;
+            const generators = {
+                census: generateCensus,
+                vital: generateVital,
+                probate: generateProbate,
+                land: generateLand,
+                church: generateChurch,
+                newspaper: generateNewspaper,
+                compiled: generateCompiled
+            };
+            
+            generators[activeTab]();
+            document.getElementById('output').classList.add('show');
+            document.getElementById('output').scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        function generateCensus() {
+            const year = get('census-year');
+            const state = get('census-state');
+            const county = get('census-county');
+            const township = get('census-township');
+            const ed = get('census-ed');
+            const sheet = get('census-sheet');
+            const line = get('census-line');
+            const household = get('census-household');
+            const database = get('census-database');
+            const url = get('census-url');
+            const accessed = get('census-accessed');
+            
+            // First Reference Note
+            let first = `${year} U.S. census, ${county} County, ${state}`;
+            if (township) first += `, ${township}`;
+            if (ed) first += `, ${ed}`;
+            if (sheet) first += `, ${sheet}`;
+            if (line) first += `, ${line}`;
+            if (household) first += `, ${household} household`;
+            if (database) first += `; ${database}`;
+            if (url) first += ` (${url}`;
+            if (accessed) first += ` : ${accessed}`;
+            if (url) first += ')';
+            first += '.';
+            
+            // Subsequent Note
+            let subsequent = `${year} U.S. census`;
+            if (county && state) subsequent += `, ${county} County, ${state}`;
+            if (ed) subsequent += `, ${ed}`;
+            if (household) subsequent += `, ${household} household`;
+            subsequent += '.';
+            
+            // Source List Entry
+            let source = `U.S. Census Bureau. ${year} U.S. Census. ${state}`;
+            if (county) source += `, ${county} County`;
+            if (township) source += `, ${township}`;
+            if (database) source += `. ${database}`;
+            if (url) source += ` (${url}`;
+            if (accessed) source += ` : ${accessed}`;
+            if (url) source += ')';
+            source += '.';
+            
+            document.getElementById('first-note').innerHTML = first;
+            document.getElementById('subsequent-note').innerHTML = subsequent;
+            document.getElementById('source-list').innerHTML = source;
+        }
+        
+        function generateVital() {
+            const type = get('vital-type');
+            const name = get('vital-name');
+            const number = get('vital-number');
+            const date = get('vital-date');
+            const place = get('vital-place');
+            const authority = get('vital-authority');
+            const repository = get('vital-repository');
+            const url = get('vital-url');
+            const accessed = get('vital-accessed');
+            
+            // First Reference Note
+            let first = '';
+            if (name) first += `${name}, `;
+            first += type;
+            if (number) first += `, ${number}`;
+            if (date) first += ` (${date})`;
+            if (place) first += `, ${place}`;
+            if (authority) first += `; ${authority}`;
+            if (repository) first += `, ${repository}`;
+            if (url) first += ` (${url}`;
+            if (accessed) first += ` : ${accessed}`;
+            if (url) first += ')';
+            first += '.';
+            
+            // Subsequent Note
+            let subsequent = '';
+            if (name) subsequent += `${name}, `;
+            subsequent += type;
+            if (date) subsequent += ` (${date})`;
+            subsequent += '.';
+            
+            // Source List Entry
+            let source = '';
+            if (authority) source += `${authority}. `;
+            source += type;
+            if (place) source += `. ${place}`;
+            if (repository) source += `. ${repository}`;
+            if (url) source += ` (${url}`;
+            if (accessed) source += ` : ${accessed}`;
+            if (url) source += ')';
+            source += '.';
+            
+            document.getElementById('first-note').innerHTML = first;
+            document.getElementById('subsequent-note').innerHTML = subsequent;
+            document.getElementById('source-list').innerHTML = source;
+        }
+        
+        function generateProbate() {
+            const name = get('probate-name');
+            const type = get('probate-type');
+            const caseNum = get('probate-case');
+            const date = get('probate-date');
+            const court = get('probate-court');
+            const location = get('probate-location');
+            const volume = get('probate-volume');
+            const repository = get('probate-repository');
+            const url = get('probate-url');
+            const accessed = get('probate-accessed');
+            
+            // First Reference Note
+            let first = '';
+            if (name) first += `${name}, `;
+            first += type;
+            if (caseNum) first += `, ${caseNum}`;
+            if (date) first += ` (${date})`;
+            if (court) first += `; ${court}`;
+            if (location) first += `, ${location}`;
+            if (volume) first += `, ${volume}`;
+            if (repository) first += `; ${repository}`;
+            if (url) first += ` (${url}`;
+            if (accessed) first += ` : ${accessed}`;
+            if (url) first += ')';
+            first += '.';
+            
+            // Subsequent Note
+            let subsequent = '';
+            if (name) subsequent += `${name}, `;
+            subsequent += type;
+            if (caseNum) subsequent += `, ${caseNum}`;
+            subsequent += '.';
+            
+            // Source List Entry
+            let source = '';
+            if (court) source += `${court}. `;
+            if (name) source += `${name}. `;
+            source += type;
+            if (caseNum) source += `, ${caseNum}`;
+            if (date) source += ` (${date})`;
+            if (volume) source += `. ${volume}`;
+            if (repository) source += `. ${repository}`;
+            if (url) source += ` (${url}`;
+            if (accessed) source += ` : ${accessed}`;
+            if (url) source += ')';
+            source += '.';
+            
+            document.getElementById('first-note').innerHTML = first;
+            document.getElementById('subsequent-note').innerHTML = subsequent;
+            document.getElementById('source-list').innerHTML = source;
+        }
+        
+        function generateLand() {
+            const grantor = get('land-grantor');
+            const grantee = get('land-grantee');
+            const type = get('land-type');
+            const date = get('land-date');
+            const recorded = get('land-recorded');
+            const book = get('land-book');
+            const location = get('land-location');
+            const repository = get('land-repository');
+            const url = get('land-url');
+            const accessed = get('land-accessed');
+            
+            // First Reference Note
+            let first = '';
+            if (grantor) first += `${grantor} to `;
+            if (grantee) first += `${grantee}, `;
+            first += type;
+            if (date) first += `, ${date}`;
+            if (recorded) first += `, ${recorded}`;
+            if (book) first += `; ${book}`;
+            if (location) first += `, ${location}`;
+            if (repository) first += `; ${repository}`;
+            if (url) first += ` (${url}`;
+            if (accessed) first += ` : ${accessed}`;
+            if (url) first += ')';
+            first += '.';
+            
+            // Subsequent Note
+            let subsequent = '';
+            if (grantor) subsequent += `${grantor} to `;
+            if (grantee) subsequent += `${grantee}, `;
+            subsequent += type;
+            if (date) subsequent += `, ${date}`;
+            subsequent += '.';
+            
+            // Source List Entry
+            let source = '';
+            if (location) source += `${location}. `;
+            source += type;
+            if (book) source += `. ${book}`;
+            if (repository) source += `. ${repository}`;
+            if (url) source += ` (${url}`;
+            if (accessed) source += ` : ${accessed}`;
+            if (url) source += ')';
+            source += '.';
+            
+            document.getElementById('first-note').innerHTML = first;
+            document.getElementById('subsequent-note').innerHTML = subsequent;
+            document.getElementById('source-list').innerHTML = source;
+        }
+        
+        function generateChurch() {
+            const name = get('church-name');
+            const location = get('church-location');
+            const type = get('church-type');
+            const person = get('church-person');
+            const date = get('church-date');
+            const volume = get('church-volume');
+            const repository = get('church-repository');
+            const url = get('church-url');
+            const accessed = get('church-accessed');
+            
+            // First Reference Note
+            let first = '';
+            if (name) first += `${name}, `;
+            if (location) first += `${location}, `;
+            first += type;
+            if (person) first += `, ${person}`;
+            if (date) first += ` (${date})`;
+            if (volume) first += `, ${volume}`;
+            if (repository) first += `; ${repository}`;
+            if (url) first += ` (${url}`;
+            if (accessed) first += ` : ${accessed}`;
+            if (url) first += ')';
+            first += '.';
+            
+            // Subsequent Note
+            let subsequent = '';
+            if (name) subsequent += `${name}, `;
+            subsequent += type;
+            if (person) subsequent += `, ${person}`;
+            if (date) subsequent += ` (${date})`;
+            subsequent += '.';
+            
+            // Source List Entry
+            let source = '';
+            if (name) source += `${name}`;
+            if (location) source += `, ${location}`;
+            source += `. ${type}`;
+            if (volume) source += `, ${volume}`;
+            if (repository) source += `. ${repository}`;
+            if (url) source += ` (${url}`;
+            if (accessed) source += ` : ${accessed}`;
+            if (url) source += ')';
+            source += '.';
+            
+            document.getElementById('first-note').innerHTML = first;
+            document.getElementById('subsequent-note').innerHTML = subsequent;
+            document.getElementById('source-list').innerHTML = source;
+        }
+        
+        function generateNewspaper() {
+            const name = get('newspaper-name');
+            const place = get('newspaper-place');
+            const article = get('newspaper-article');
+            const date = get('newspaper-date');
+            const page = get('newspaper-page');
+            const repository = get('newspaper-repository');
+            const url = get('newspaper-url');
+            const accessed = get('newspaper-accessed');
+            
+            // First Reference Note
+            let first = `<i>${name}</i>`;
+            if (place) first += ` (${place})`;
+            if (article) first += `, ${article}`;
+            if (date) first += `, ${date}`;
+            if (page) first += `, ${page}`;
+            if (repository) first += `; ${repository}`;
+            if (url) first += ` (${url}`;
+            if (accessed) first += ` : ${accessed}`;
+            if (url) first += ')';
+            first += '.';
+            
+            // Subsequent Note
+            let subsequent = `<i>${name}</i>`;
+            if (article) subsequent += `, ${article}`;
+            if (date) subsequent += `, ${date}`;
+            subsequent += '.';
+            
+            // Source List Entry
+            let source = `<i>${name}</i>`;
+            if (place) source += ` (${place})`;
+            if (repository) source += `. ${repository}`;
+            if (url) source += ` (${url}`;
+            if (accessed) source += ` : ${accessed}`;
+            if (url) source += ')';
+            source += '.';
+            
+            document.getElementById('first-note').innerHTML = first;
+            document.getElementById('subsequent-note').innerHTML = subsequent;
+            document.getElementById('source-list').innerHTML = source;
+        }
+        
+        function generateCompiled() {
+            const author = get('compiled-author');
+            const title = get('compiled-title');
+            const place = get('compiled-place');
+            const publisher = get('compiled-publisher');
+            const year = get('compiled-year');
+            const page = get('compiled-page');
+            const entry = get('compiled-entry');
+            const repository = get('compiled-repository');
+            const url = get('compiled-url');
+            const accessed = get('compiled-accessed');
+            
+            // First Reference Note
+            let first = '';
+            if (author) first += `${author}, `;
+            first += `<i>${title}</i>`;
+            if (place || publisher || year) {
+                first += ' (';
+                const pubInfo = [];
+                if (place) pubInfo.push(place);
+                if (publisher) pubInfo.push(publisher);
+                if (year) pubInfo.push(year);
+                first += pubInfo.join(' : ');
+                first += ')';
+            }
+            if (page) first += `, ${page}`;
+            if (entry) first += `, ${entry}`;
+            if (repository) first += `; ${repository}`;
+            if (url) first += ` (${url}`;
+            if (accessed) first += ` : ${accessed}`;
+            if (url) first += ')';
+            first += '.';
+            
+            // Subsequent Note
+            let subsequent = '';
+            if (author) {
+                const lastName = author.split(',')[0];
+                subsequent += `${lastName}, `;
+            }
+            subsequent += `<i>${title}</i>`;
+            if (page) subsequent += `, ${page}`;
+            subsequent += '.';
+            
+            // Source List Entry
+            let source = '';
+            if (author) source += `${author}. `;
+            source += `<i>${title}</i>`;
+            if (place || publisher || year) {
+                source += '. ';
+                const pubInfo = [];
+                if (place) pubInfo.push(place);
+                if (publisher) pubInfo.push(publisher);
+                if (year) pubInfo.push(year);
+                source += pubInfo.join(' : ');
+            }
+            if (repository) source += `. ${repository}`;
+            if (url) source += ` (${url}`;
+            if (accessed) source += ` : ${accessed}`;
+            if (url) source += ')';
+            source += '.';
+            
+            document.getElementById('first-note').innerHTML = first;
+            document.getElementById('subsequent-note').innerHTML = subsequent;
+            document.getElementById('source-list').innerHTML = source;
+        }
+        
+        function copyCitation(elementId) {
+            const element = document.getElementById(elementId);
+            const text = element.textContent;
+            
+            navigator.clipboard.writeText(text).then(() => {
+                const btn = event.target;
+                const originalText = btn.textContent;
+                btn.textContent = 'Copied!';
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+</html>
